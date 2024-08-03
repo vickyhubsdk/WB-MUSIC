@@ -8,7 +8,7 @@ from pyrogram import idle
 import os
 from dotenv import load_dotenv
 import uvicorn
-
+from YM import LOGGER
 load_dotenv()
 
 # Create FastAPI app instance
@@ -28,17 +28,19 @@ sio_app = socketio.ASGIApp(sio, other_asgi_app=app)
 
 @sio.event
 async def message(sid, data):
-    print("SocketIO message:", data)
     await sio.emit('response', f"Message received: {data}")
 
 async def start_bot():
+    LOGGER("YM").info("Starting bot...")
     await bot.start()
     await bot.send_message(-1002146211959, "Started")
+    LOGGER("YM").info(f"Bot Started As {bot.me.first_name}")
     await idle()
 
 async def start_server():
     config = uvicorn.Config(app=sio_app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)), workers=1)
     server = uvicorn.Server(config)
+    LOGGER("YM").info("Starting Web Client")
     await server.serve()
 
 if __name__ == "__main__":
