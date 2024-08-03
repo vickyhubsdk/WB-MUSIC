@@ -12,5 +12,8 @@
     "NOTHING": {
       "description": "KEEY THIS VAR EMPTY DIDN'T NEED TO FILL",
     }
+  },
+  "scripts": {
+    "start": "uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1"
   }
 }
