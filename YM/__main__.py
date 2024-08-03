@@ -1,36 +1,37 @@
-from fastapi import FastAPI
-from socketio import ASGIApp, Server
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+import socketio
 import asyncio
 from bot import bot
-from config import LOG_GROUP_ID
 from pyrogram import idle
+import os
+from dotenv import load_dotenv
+import uvicorn
 
+load_dotenv()
+
+sio = socketio.AsyncServer(async_mode='asgi')
 app = FastAPI()
+sio_app = socketio.ASGIApp(sio, other_asgi_app=app)
 
-sio = Server(async_mode="asgi")
-app_asgi = ASGIApp(sio, app)
-
-from fastapi.staticfiles import StaticFiles
 app.mount("/static", StaticFiles(directory="YM/static"), name="static")
 
-@app.get("/")
-async def read_index():
-    with open("YM/templates/index.html") as f:
-        return fastapi.responses.HTMLResponse(f.read())
+@app.get("/", response_class=HTMLResponse)
+async def read_root():
+    with open("YM/templates/index.html", "r") as f:
+        return HTMLResponse(content=f.read(), status_code=200)
 
-async def run_bot():
+@sio.event
+async def message(sid, data):
+    print("SocketIO message:", data)
+    await sio.emit('response', f"Message received: {data}")
+
+async def start_bot():
     await bot.start()
-    try:
-        await bot.send_message(LOG_GROUP_ID, "Started")
-    except Exception:
-        pass
     await idle()
 
-@app.on_event("startup")
-async def startup_event():
-    loop = asyncio.get_event_loop()
-    loop.create_task(run_bot())
-
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app_asgi, host="0.0.0.0", port=8000)
+    loop = asyncio.get_event_loop()
+    loop.create_task(start_bot())
+    uvicorn.run(sio_app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
