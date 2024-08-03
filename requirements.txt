@@ -1,5 +1,5 @@
-fastapi==0.79.0
-uvicorn==0.18.3
-python-socketio==5.7.2
+fastapi
+uvicorn
+python-socketio[asgi]
 tgcrypto
 git+https://github.com/KurimuzonAkuma/pyrogram@dev
