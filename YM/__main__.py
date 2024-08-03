@@ -4,7 +4,6 @@ import asyncio
 from bot import bot
 from config import LOG_GROUP_ID
 from pyrogram import idle
-import threading
 
 app = FastAPI()
 
@@ -27,18 +26,10 @@ async def run_bot():
         pass
     await idle()
 
-def start_bot():
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(run_bot())
-
 @app.on_event("startup")
 async def startup_event():
     loop = asyncio.get_event_loop()
     loop.create_task(run_bot())
-
-# Start bot in a separate thread to avoid blocking the main thread
-threading.Thread(target=start_bot).start()
 
 if __name__ == "__main__":
     import uvicorn
