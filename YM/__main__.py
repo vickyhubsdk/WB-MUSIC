@@ -1,34 +1,38 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from pathlib import Path
-import socketio
-
-# Create a new Async SocketIO server
-sio = socketio.AsyncServer(async_mode='asgi')
+from socketio import ASGIApp, Server
+import asyncio
+from bot import bot
+from config import LOG_GROUP_ID
 app = FastAPI()
 
-# Mount the static directory to serve static files
+sio = Server(async_mode="asgi")
+app_asgi = ASGIApp(sio, app)
+
+from fastapi.staticfiles import StaticFiles
 app.mount("/static", StaticFiles(directory="YM/static"), name="static")
 
-# Create a new ASGI application combining FastAPI and SocketIO
-app_asgi = socketio.ASGIApp(sio, app)
+@app.get("/")
+async def read_index():
+    return fastapi.responses.HTMLResponse(open("YM/templates/index.html").read())
 
-@app.get("/", response_class=HTMLResponse)
-async def read_root():
-    html_content = Path("YM/templates/index.html").read_text()
-    return HTMLResponse(content=html_content)
+async def run_bot():
+    await bot.start()
+    try:
+        bot.send_message(LOG_GROUP_ID, "Started")
+    except Exception:
+        pass
+    await idle()
 
-# Define SocketIO events
-@sio.event
-async def connect(sid, environ):
-    print("Client connected:", sid)
 
-@sio.event
-async def disconnect(sid):
-    print("Client disconnected:", sid)
+def start_bot():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(run_bot())
 
-@sio.event
-async def message(sid, data):
-    print("Message from", sid, ":", data)
-    await sio.emit('response', {'data': 'Hello from server'}, room=sid)
+@app.on_event("startup")
+async def startup_event():
+    loop = asyncio.get_event_loop()
+    loop.create_task(run_bot())
+
+import threading
+threading.Thread(target=start_bot).start()
