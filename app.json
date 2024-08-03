@@ -1,0 +1,17 @@
+{
+  "name": "my-fastapi-app",
+  "description": "A FastAPI app with Socket.IO and static files.",
+  "repository": "https://github.com/TheTeamVivek/WB-MUSIC",
+  "keywords": ["fastapi", "socket.io", "python", "telegram-bot", "pyrogram"],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "env": {
+    "NOTHING": {
+      "description": "KEEY THIS VAR EMPTY DIDN'T NEED TO FILL",
+      "required": False
+    }
+  }
+}
