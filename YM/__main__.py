@@ -32,13 +32,16 @@ async def message(sid, data):
     await sio.emit('response', f"Message received: {data}")
 
 async def start_bot():
+    LOGGER(__name__).info("Starting bot...")
     await bot.start()
     await bot.send_message(-1002146211959, "Started")
+    LOGGER(__name__).info(f"Bot Started As {bot.me.first_name}")
     await idle()
 
 async def start_server():
     config = uvicorn.Config(app=sio_app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)), workers=1)
     server = uvicorn.Server(config)
+    LOGGER(__name__).info("Starting Web Client")
     await server.serve()
 
 if __name__ == "__main__":
