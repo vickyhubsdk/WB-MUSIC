@@ -3,6 +3,9 @@ from socketio import ASGIApp, Server
 import asyncio
 from bot import bot
 from config import LOG_GROUP_ID
+from pyrogram import idle
+import threading
+
 app = FastAPI()
 
 sio = Server(async_mode="asgi")
@@ -13,7 +16,8 @@ app.mount("/static", StaticFiles(directory="YM/static"), name="static")
 
 @app.get("/")
 async def read_index():
-    return fastapi.responses.HTMLResponse(open("YM/templates/index.html").read())
+    with open("YM/templates/index.html") as f:
+        return fastapi.responses.HTMLResponse(f.read())
 
 async def run_bot():
     await bot.start()
@@ -22,7 +26,6 @@ async def run_bot():
     except Exception:
         pass
     await idle()
-
 
 def start_bot():
     loop = asyncio.new_event_loop()
@@ -34,5 +37,9 @@ async def startup_event():
     loop = asyncio.get_event_loop()
     loop.create_task(run_bot())
 
-import threading
+# Start bot in a separate thread to avoid blocking the main thread
 threading.Thread(target=start_bot).start()
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app_asgi, host="0.0.0.0", port=8000)
