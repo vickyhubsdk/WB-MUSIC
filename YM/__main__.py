@@ -11,6 +11,12 @@ import uvicorn
 
 load_dotenv()
 
+app_asgi = FastAPI()
+
+@app_asgi.get("/")
+async def root():
+    return {"message": "Hello, World!"}
+
 sio = socketio.AsyncServer(async_mode='asgi')
 app = FastAPI()
 sio_app = socketio.ASGIApp(sio, other_asgi_app=app)
