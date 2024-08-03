@@ -9,10 +9,3 @@ bot = Client(
       bot_token=BOT_TOKEN,
       plugins = dict(root="YM.plugins")
     )
-async def run_bot():
-    await bot.start()
-    try:
-        await bot.send_message(LOG_GROUP_ID, "Bot Started")
-    except Exception:
-      pass
-    await idle()
