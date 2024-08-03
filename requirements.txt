@@ -2,6 +2,6 @@ asyncio
 aiohttp
 fastapi
 uvicorn
-python-socketio[asgi]
+python-socketio[client,asyncio]
 tgcrypto
 git+https://github.com/KurimuzonAkuma/pyrogram@dev
