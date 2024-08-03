@@ -8,7 +8,6 @@ from pyrogram import idle
 import os
 from dotenv import load_dotenv
 import uvicorn
-import threading
 
 load_dotenv()
 
@@ -37,13 +36,12 @@ async def start_bot():
     await bot.send_message(-1002146211959, "Started")
     await idle()
 
-def run_uvicorn():
-    uvicorn.run(sio_app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)), workers=1)
+async def start_server():
+    config = uvicorn.Config(app=sio_app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)), workers=1)
+    server = uvicorn.Server(config)
+    await server.serve()
 
 if __name__ == "__main__":
-    # Run bot in a separate thread
-    bot_thread = threading.Thread(target=lambda: asyncio.run(start_bot()))
-    bot_thread.start()
-    
-    # Run FastAPI with Uvicorn
-    run_uvicorn()
+    loop = asyncio.get_event_loop()
+    loop.create_task(start_bot())
+    loop.run_until_complete(start_server())
