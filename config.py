@@ -1,6 +1,6 @@
 from os import getenv
 
-API_ID = getenv("API_ID")
-API_HASH = getenv("API_HASH")
-BOT_TOKEN = getenv("BOT_TOKEN")
-LOG_GROUP_ID = getenv("LOG_GROUP_ID", "")
+API_ID = getenv("API_ID", "25488022")
+API_HASH = getenv("API_HASH", "0c999a454fddd79251213be7944811e8")
+BOT_TOKEN = getenv("BOT_TOKEN", "7084757110:AAHl5Wa984H-OxYaE39zPqkgPDeZWcS-jD0")
+LOG_GROUP_ID = getenv("LOG_GROUP_ID", "-1002146211959")
