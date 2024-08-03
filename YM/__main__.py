@@ -8,8 +8,7 @@ import threading
 
 app = FastAPI()
 
-#sio = Server(async_mode="asgi")
-sio = Server(async_mode="aiohttp")
+sio = Server(async_mode="asgi")
 app_asgi = ASGIApp(sio, app)
 
 from fastapi.staticfiles import StaticFiles
