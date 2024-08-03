@@ -11,22 +11,20 @@ import uvicorn
 
 load_dotenv()
 
-app_asgi = FastAPI()
-
-@app_asgi.get("/")
-async def root():
-    return {"message": "Hello, World!"}
-
-sio = socketio.AsyncServer(async_mode='asgi')
+# Create FastAPI app instance
 app = FastAPI()
-sio_app = socketio.ASGIApp(sio, other_asgi_app=app)
 
+# Configure static files directory
 app.mount("/static", StaticFiles(directory="YM/static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     with open("YM/templates/index.html", "r") as f:
         return HTMLResponse(content=f.read(), status_code=200)
+
+# Configure Socket.IO server
+sio = socketio.AsyncServer(async_mode='asgi')
+sio_app = socketio.ASGIApp(sio, other_asgi_app=app)
 
 @sio.event
 async def message(sid, data):
@@ -35,9 +33,15 @@ async def message(sid, data):
 
 async def start_bot():
     await bot.start()
+    await bot.send_message(-1002146211959, "Started")
     await idle()
+
+async def start_server():
+    config = uvicorn.Config(app=sio_app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)), workers=1)
+    server = uvicorn.Server(config)
+    await server.serve()
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.create_task(start_bot())
-    uvicorn.run(sio_app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)), workers=1)
+    loop.run_until_complete(start_server())
