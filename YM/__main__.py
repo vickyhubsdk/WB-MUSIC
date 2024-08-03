@@ -18,7 +18,7 @@ async def read_index():
 async def run_bot():
     await bot.start()
     try:
-        bot.send_message(LOG_GROUP_ID, "Started")
+        await bot.send_message(LOG_GROUP_ID, "Started")
     except Exception:
         pass
     await idle()
