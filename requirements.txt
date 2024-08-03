@@ -3,6 +3,7 @@ aiohttp
 fastapi
 uvicorn
 python-socketio[client,asyncio]
+python-dotenv
 tgcrypto
 git+https://github.com/KurimuzonAkuma/pyrogram@dev
 python-dotenv
