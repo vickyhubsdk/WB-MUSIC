@@ -11,7 +11,6 @@
   "env": {
     "NOTHING": {
       "description": "KEEY THIS VAR EMPTY DIDN'T NEED TO FILL",
-      "required": False
     }
   }
 }
