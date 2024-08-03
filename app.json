@@ -9,11 +9,24 @@
     }
   ],
   "env": {
-    "NOTHING": {
-      "description": "KEEY THIS VAR EMPTY DIDN'T NEED TO FILL",
+    "API_ID": {
+      "description": "Your API ID from Telegram",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Your API Hash from Telegram",
+      "required": true
+    },
+    "BOT_TOKEN": {
+      "description": "Your bot token from BotFather",
+      "required": true
+    },
+    "LOG_GROUP_ID": {
+      "description": "The group ID where logs will be sent",
+      "required": true
     }
   },
   "scripts": {
-    "start": "uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1"
+    "start": "uvicorn YM.__main__:app_asgi --host 0.0.0.0 --port $PORT --workers 1"
   }
 }
