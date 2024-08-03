@@ -34,7 +34,7 @@ async def message(sid, data):
 
 async def start_bot():
     await bot.start()
-    bot.send_message(-1002146211959, "Started")
+    await bot.send_message(-1002146211959, "Started")
     await idle()
 
 def run_uvicorn():
